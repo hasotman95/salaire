@@ -1,0 +1,1022 @@
+<!DOCTYPE html>
+<html lang="fr" class="h-full bg-slate-50">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculateur de Paie Maroc 2026 / 2027</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f0f7ff',
+                            100: '#e0effe',
+                            500: '#0284c7',
+                            600: '#0369a1',
+                            700: '#0369a1',
+                            800: '#075985',
+                            900: '#0c4a6e',
+                        },
+                        emerald_custom: {
+                            500: '#10b981',
+                            600: '#059669',
+                            700: '#047857'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Modern Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        /* Print styling for Payslip */
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            #printable-payslip, #printable-payslip * {
+                visibility: visible;
+            }
+            #printable-payslip {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                background: white;
+                color: black;
+                box-shadow: none !important;
+                border: 1px solid #ccc !important;
+            }
+            .no-print {
+                display: none !important;
+            }
+        }
+    </style>
+</head>
+<body class="h-full flex flex-col font-sans text-slate-800 antialiased selection:bg-brand-500 selection:text-white">
+
+    <!-- Top Navigation Header -->
+    <header class="bg-brand-900 text-white shadow-lg sticky top-0 z-50 no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center space-x-3">
+                    <div class="bg-brand-500 p-2 rounded-lg text-white shadow-md">
+                        <i class="fa-solid fa-calculator text-xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-lg sm:text-xl font-bold tracking-tight">PaieMaroc Expert</h1>
+                        <p class="text-xs text-brand-100 hidden sm:block">Simulateur Fiscal & Social (Ancien Barème vs Barème Réformé)</p>
+                    </div>
+                </div>
+
+                <!-- Global Quick Action / Info Badge -->
+                <div class="flex items-center space-x-2">
+                    <span class="bg-emerald-500/20 text-emerald-300 text-xs px-3 py-1 rounded-full border border-emerald-500/30 flex items-center gap-1 font-medium">
+                        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> Législation Officielle
+                    </span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Workspace -->
+    <div class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+        <!-- Navigation Tabs -->
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-1.5 mb-6 flex flex-wrap gap-1 no-print">
+            <button onclick="switchTab('tab-sim')" id="btn-tab-sim" class="tab-btn flex-1 min-w-[140px] px-4 py-2.5 rounded-lg text-sm font-semibold transition-all flex items-center justify-center gap-2 bg-brand-800 text-white shadow">
+                <i class="fa-solid fa-sliders text-brand-500"></i> Simulateur & Comparateur
+            </button>
+            <button onclick="switchTab('tab-fiche')" id="btn-tab-fiche" class="tab-btn flex-1 min-w-[140px] px-4 py-2.5 rounded-lg text-sm font-semibold transition-all flex items-center justify-center gap-2 text-slate-600 hover:bg-slate-100">
+                <i class="fa-solid fa-file-invoice-dollar text-slate-500"></i> Bulletin de Paie Imprimable
+            </button>
+            <button onclick="switchTab('tab-cas')" id="btn-tab-cas" class="tab-btn flex-1 min-w-[140px] px-4 py-2.5 rounded-lg text-sm font-semibold transition-all flex items-center justify-center gap-2 text-slate-600 hover:bg-slate-100">
+                <i class="fa-solid fa-list-check text-slate-500"></i> Cas Pratique (15 000 DH)
+            </button>
+            <button onclick="switchTab('tab-formulas')" id="btn-tab-formulas" class="tab-btn flex-1 min-w-[140px] px-4 py-2.5 rounded-lg text-sm font-semibold transition-all flex items-center justify-center gap-2 text-slate-600 hover:bg-slate-100">
+                <i class="fa-solid fa-table text-slate-500"></i> Formules Excel & Barèmes
+            </button>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- TAB 1: SIMULATEUR DYNAMIQUE ET COMPARATEUR -->
+        <!-- ========================================== -->
+        <div id="tab-sim" class="tab-content">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+                <!-- Sidebar Inputs -->
+                <div class="lg:col-span-4 space-y-6">
+                    <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6 space-y-5">
+                        <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                            <h2 class="font-bold text-slate-800 flex items-center gap-2">
+                                <i class="fa-solid fa-user-gear text-brand-600"></i> Saisie des Paramètres
+                            </h2>
+                            <button onclick="resetInputs()" class="text-xs text-brand-600 hover:text-brand-800 font-medium">Réinitialiser</button>
+                        </div>
+
+                        <!-- Salaire Brut Input & Slider -->
+                        <div>
+                            <div class="flex justify-between items-center mb-1">
+                                <label class="block text-sm font-medium text-slate-700">Salaire Brut de Base (DH)</label>
+                                <span class="text-xs font-semibold text-brand-600" id="brut-display">15 000 DH</span>
+                            </div>
+                            <div class="relative rounded-md shadow-sm">
+                                <input type="number" id="input-brut" min="0" step="250" value="15000" oninput="syncBrutInput(this.value)"
+                                    class="block w-full rounded-lg border-slate-300 pl-3 pr-12 py-2 text-slate-900 border focus:border-brand-500 focus:ring-brand-500 text-base font-semibold">
+                                <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-slate-400 font-medium text-xs">DH</div>
+                            </div>
+                            <input type="range" id="slider-brut" min="3000" max="60000" step="500" value="15000" oninput="syncBrutSlider(this.value)"
+                                class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-brand-600 mt-3">
+                            <div class="flex justify-between text-[10px] text-slate-400 mt-1">
+                                <span>3 000 DH</span>
+                                <span>30 000 DH</span>
+                                <span>60 000 DH</span>
+                            </div>
+                        </div>
+
+                        <!-- Indemnités Non Imposables / Primes -->
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Indemnités Non Imposables (DH)</label>
+                            <div class="relative rounded-md shadow-sm">
+                                <input type="number" id="input-exore" min="0" step="100" value="0" oninput="calculateAll()"
+                                    class="block w-full rounded-lg border-slate-300 pl-3 pr-12 py-2 text-slate-900 border focus:border-brand-500 focus:ring-brand-500 text-sm">
+                                <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-slate-400 font-medium text-xs">DH</div>
+                            </div>
+                            <p class="text-[11px] text-slate-400 mt-1">Ex: Transport (dans les limites), repas, représentation etc.</p>
+                        </div>
+
+                        <!-- Personnes à charge -->
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Personnes à Charge</label>
+                            <div class="grid grid-cols-7 gap-1">
+                                <button type="button" onclick="setCharge(0)" class="charge-btn border border-slate-200 py-1.5 rounded-md text-xs font-semibold hover:bg-slate-50">0</button>
+                                <button type="button" onclick="setCharge(1)" class="charge-btn border border-slate-200 py-1.5 rounded-md text-xs font-semibold hover:bg-slate-50">1</button>
+                                <button type="button" onclick="setCharge(2)" class="charge-btn bg-brand-800 text-white border border-brand-800 py-1.5 rounded-md text-xs font-semibold">2</button>
+                                <button type="button" onclick="setCharge(3)" class="charge-btn border border-slate-200 py-1.5 rounded-md text-xs font-semibold hover:bg-slate-50">3</button>
+                                <button type="button" onclick="setCharge(4)" class="charge-btn border border-slate-200 py-1.5 rounded-md text-xs font-semibold hover:bg-slate-50">4</button>
+                                <button type="button" onclick="setCharge(5)" class="charge-btn border border-slate-200 py-1.5 rounded-md text-xs font-semibold hover:bg-slate-50">5</button>
+                                <button type="button" onclick="setCharge(6)" class="charge-btn border border-slate-200 py-1.5 rounded-md text-xs font-semibold hover:bg-slate-50">6</button>
+                            </div>
+                            <p class="text-[11px] text-slate-400 mt-1">50 DH / mois par personne (Max 6 personnes = 300 DH)</p>
+                        </div>
+
+                        <!-- Paramètres Rapides pré-définis -->
+                        <div class="pt-3 border-t border-slate-100">
+                            <label class="block text-xs font-medium text-slate-500 mb-2">Profils Types Salaires</label>
+                            <div class="flex flex-wrap gap-2">
+                                <button onclick="setQuickBrut(4000)" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 rounded text-xs text-slate-700 font-medium transition">SMIG (~4k)</button>
+                                <button onclick="setQuickBrut(8000)" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 rounded text-xs text-slate-700 font-medium transition">8 000 DH</button>
+                                <button onclick="setQuickBrut(15000)" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 rounded text-xs text-slate-700 font-medium transition">15 000 DH</button>
+                                <button onclick="setQuickBrut(25000)" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 rounded text-xs text-slate-700 font-medium transition">25 000 DH</button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Main Results & Comparison Panel -->
+                <div class="lg:col-span-8 space-y-6">
+
+                    <!-- Impact Réforme Summary Card -->
+                    <div class="bg-gradient-to-r from-brand-900 via-brand-800 to-slate-900 rounded-xl p-6 text-white shadow-md relative overflow-hidden">
+                        <div class="absolute -right-6 -bottom-6 opacity-10">
+                            <i class="fa-solid fa-coins text-9xl"></i>
+                        </div>
+                        <div class="relative z-10">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <span class="bg-emerald-500/30 text-emerald-300 text-xs font-bold px-2.5 py-1 rounded-md border border-emerald-400/30 uppercase tracking-wider">
+                                        Impact Nouveau Barème IR & Frais Pro 45%
+                                    </span>
+                                    <h3 class="text-xl font-bold mt-2">Gain sur le Salaire Net à Payer</h3>
+                                </div>
+                                <div class="text-right">
+                                    <span class="text-3xl font-extrabold text-emerald-400" id="gain-mensuel">+0.00 DH</span>
+                                    <span class="block text-xs text-slate-300" id="gain-pourcentage">+0.0% de gain</span>
+                                </div>
+                            </div>
+
+                            <div class="mt-4 pt-4 border-t border-slate-700/60 grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
+                                <div class="bg-white/5 rounded-lg p-2">
+                                    <span class="text-[11px] text-slate-300 block">Gain Annuel Net</span>
+                                    <span class="text-base font-bold text-white" id="gain-annuel">0 DH</span>
+                                </div>
+                                <div class="bg-white/5 rounded-lg p-2">
+                                    <span class="text-[11px] text-slate-300 block">Économie d'Impôt IR</span>
+                                    <span class="text-base font-bold text-emerald-300" id="eco-ir">0 DH/mois</span>
+                                </div>
+                                <div class="bg-white/5 rounded-lg p-2">
+                                    <span class="text-[11px] text-slate-300 block">Taux Effectif 2026</span>
+                                    <span class="text-base font-bold text-slate-200" id="taux-effectif-2026">0%</span>
+                                </div>
+                                <div class="bg-white/5 rounded-lg p-2">
+                                    <span class="text-[11px] text-slate-300 block">Taux Effectif 2027</span>
+                                    <span class="text-base font-bold text-emerald-300" id="taux-effectif-2027">0%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Comparison Grid 2026 vs 2027 -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                        <!-- ANCIEN BARÈME -->
+                        <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden flex flex-col justify-between">
+                            <div>
+                                <div class="bg-slate-100 px-5 py-3 border-b border-slate-200 flex justify-between items-center">
+                                    <span class="font-bold text-slate-700 flex items-center gap-2">
+                                        <i class="fa-regular fa-calendar text-slate-500"></i> Barème 2026
+                                    </span>
+                                    <span class="text-xs bg-slate-200 text-slate-700 font-semibold px-2 py-0.5 rounded">2026</span>
+                                </div>
+
+                                <div class="p-5 space-y-3">
+                                    <div class="flex justify-between items-center text-sm py-1 border-b border-slate-100">
+                                        <span class="text-slate-600">Salaire Brut Global</span>
+                                        <span class="font-semibold text-slate-800" id="v26-brut">15 000.00 DH</span>
+                                    </div>
+                                    <div class="flex justify-between items-center text-sm py-1 border-b border-slate-100">
+                                        <span class="text-slate-600">Cotisations CNSS (4.48% Max 268.80)</span>
+                                        <span class="font-semibold text-rose-600" id="v26-cnss">-268.80 DH</span>
+                                    </div>
+                                    <div class="flex justify-between items-center text-sm py-1 border-b border-slate-100">
+                                        <span class="text-slate-600">Cotisations AMO (2.26%)</span>
+                                        <span class="font-semibold text-rose-600" id="v26-amo">-339.00 DH</span>
+                                    </div>
+                                    <div class="flex justify-between items-center text-sm py-1 border-b border-slate-100">
+                                        <div>
+                                            <span class="text-slate-600 block">Frais Professionnels</span>
+                                            <span class="text-[10px] text-slate-400" id="v26-frais-rate">Taux: 25% | Plafond: 2916.67 DH</span>
+                                        </div>
+                                        <span class="font-semibold text-slate-700" id="v26-frais">-2 916.67 DH</span>
+                                    </div>
+                                    <div class="flex justify-between items-center text-sm py-1 bg-slate-50 px-2 rounded font-medium">
+                                        <span class="text-slate-700">Salaire Net Imposable (SNI)</span>
+                                        <span class="text-slate-900 font-bold" id="v26-sni">11 475.53 DH</span>
+                                    </div>
+                                    <div class="flex justify-between items-center text-sm py-1 border-b border-slate-100">
+                                        <span class="text-slate-600">IR Brut (Tranche <span id="v26-ir-tranche">34%</span>)</span>
+                                        <span class="font-semibold text-slate-700" id="v26-ir-brut">2 068.35 DH</span>
+                                    </div>
+                                    <div class="flex justify-between items-center text-sm py-1 border-b border-slate-100">
+                                        <span class="text-slate-600">Charges de Famille (<span id="v26-nb-charge">2</span> pers)</span>
+                                        <span class="font-semibold text-emerald-600" id="v26-deduction-famille">+100.00 DH</span>
+                                    </div>
+                                    <div class="flex justify-between items-center text-sm py-1 border-b border-slate-100">
+                                        <span class="text-slate-600 font-semibold">IR Net à Prélever</span>
+                                        <span class="font-bold text-rose-600" id="v26-ir-net">1 968.35 DH</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Net Total 2026 -->
+                            <div class="bg-slate-50 p-4 border-t border-slate-200">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-sm font-bold text-slate-700">NET À PAYER (2026)</span>
+                                    <span class="text-xl font-extrabold text-brand-900" id="v26-net">12 423.85 DH</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- BARÈME NOUVEAU (2027) -->
+                        <div class="bg-white rounded-xl border-2 border-emerald-500/40 shadow-sm overflow-hidden flex flex-col justify-between relative">
+                            <div class="absolute top-0 right-0 bg-emerald-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-bl">Barème 2027</div>
+                            <div>
+                                <div class="bg-emerald-50/60 px-5 py-3 border-b border-emerald-100 flex justify-between items-center">
+                                    <span class="font-bold text-emerald-900 flex items-center gap-2">
+                                        <i class="fa-solid fa-sparkles text-emerald-600"></i> Barème 2027 (Frais Pro 45%)
+                                    </span>
+                                </div>
+
+                                <div class="p-5 space-y-3">
+                                    <div class="flex justify-between items-center text-sm py-1 border-b border-slate-100">
+                                        <span class="text-slate-600">Salaire Brut Global</span>
+                                        <span class="font-semibold text-slate-800" id="v27-brut">15 000.00 DH</span>
+                                    </div>
+                                    <div class="flex justify-between items-center text-sm py-1 border-b border-slate-100">
+                                        <span class="text-slate-600">Cotisations CNSS (4.48%)</span>
+                                        <span class="font-semibold text-rose-600" id="v27-cnss">-268.80 DH</span>
+                                    </div>
+                                    <div class="flex justify-between items-center text-sm py-1 border-b border-slate-100">
+                                        <span class="text-slate-600">Cotisations AMO (2.26%)</span>
+                                        <span class="font-semibold text-rose-600" id="v27-amo">-339.00 DH</span>
+                                    </div>
+                                    <div class="flex justify-between items-center text-sm py-1 border-b border-slate-100">
+                                        <div>
+                                            <span class="text-slate-600 block">Frais Professionnels (45%)</span>
+                                            <span class="text-[10px] text-slate-400" id="v27-frais-rate">Taux: 45% | Plafond: 2916.67 DH</span>
+                                        </div>
+                                        <span class="font-semibold text-slate-700" id="v27-frais">-2 916.67 DH</span>
+                                    </div>
+                                    <div class="flex justify-between items-center text-sm py-1 bg-emerald-50/50 px-2 rounded font-medium">
+                                        <span class="text-slate-700">Salaire Net Imposable (SNI)</span>
+                                        <span class="text-slate-900 font-bold" id="v27-sni">11 475.53 DH</span>
+                                    </div>
+                                    <div class="flex justify-between items-center text-sm py-1 border-b border-slate-100">
+                                        <span class="text-slate-600">IR Brut (Tranche <span id="v27-ir-tranche">34%</span>)</span>
+                                        <span class="font-semibold text-slate-700" id="v27-ir-brut">1 568.35 DH</span>
+                                    </div>
+                                    <div class="flex justify-between items-center text-sm py-1 border-b border-slate-100">
+                                        <span class="text-slate-600">Charges de Famille (<span id="v27-nb-charge">2</span> pers)</span>
+                                        <span class="font-semibold text-emerald-600" id="v27-deduction-famille">+100.00 DH</span>
+                                    </div>
+                                    <div class="flex justify-between items-center text-sm py-1 border-b border-slate-100">
+                                        <span class="text-slate-600 font-semibold">IR Net à Prélever</span>
+                                        <span class="font-bold text-emerald-700" id="v27-ir-net">1 468.35 DH</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Net Total 2027 -->
+                            <div class="bg-emerald-500 text-white p-4">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-sm font-bold">NET À PAYER (2027)</span>
+                                    <span class="text-xl font-extrabold" id="v27-net">12 923.85 DH</span>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- TAB 2: BULLETINS DE PAIE IMPRIMABLE        -->
+        <!-- ========================================== -->
+        <div id="tab-fiche" class="tab-content hidden">
+            <div class="max-w-4xl mx-auto space-y-4">
+                
+                <!-- Print toolbar -->
+                <div class="flex justify-between items-center bg-white p-4 rounded-xl shadow-sm border border-slate-200 no-print">
+                    <div>
+                        <h3 class="font-bold text-slate-800">Générateur de Bulletin Officiel</h3>
+                        <p class="text-xs text-slate-500">Choisissez le barème pour exporter la fiche au format légal.</p>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <select id="select-fiche-year" onchange="updatePayslipView()" class="rounded-lg border-slate-300 text-sm font-semibold border py-2 px-3 focus:ring-brand-500 focus:border-brand-500">
+                            <option value="2027">Bulletin Nouveau Barème (Officiel)</option>
+                            <option value="2026">Bulletin Ancien Barème (Historique)</option>
+                        </select>
+                        <button onclick="window.print()" class="bg-brand-800 hover:bg-brand-900 text-white px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-2 shadow-sm">
+                            <i class="fa-solid fa-print"></i> Imprimer / Enregistrer PDF
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Printable Payslip Document -->
+                <div id="printable-payslip" class="bg-white rounded-xl shadow-lg border border-slate-200 p-8 text-slate-800">
+                    
+                    <!-- Payslip Header -->
+                    <div class="flex justify-between items-start border-b-2 border-slate-800 pb-6 mb-6">
+                        <div>
+                            <h2 class="text-2xl font-black uppercase tracking-wider text-slate-900">BULLETIN DE PAIE</h2>
+                            <p class="text-sm text-slate-500">Période: Mensuelle - <span id="ps-period">Janvier 2026</span></p>
+                            <p class="text-xs text-slate-400 mt-1">Société : **ENTREPRISE MAROCAINE SARL**</p>
+                            <p class="text-xs text-slate-400">RC : 123456 | CNSS : 9876543 | ICE : 000111222333444</p>
+                        </div>
+                        <div class="text-right border-l-2 border-brand-500 pl-4">
+                            <p class="text-sm font-bold text-slate-800">Nom & Prénom: <span class="font-normal text-slate-600">Collaborateur Exemple</span></p>
+                            <p class="text-sm font-bold text-slate-800">Matricule: <span class="font-normal text-slate-600">EMP-2026-09</span></p>
+                            <p class="text-sm font-bold text-slate-800">N° CNSS: <span class="font-normal text-slate-600">123456789</span></p>
+                            <p class="text-sm font-bold text-slate-800">Situation Fam.: <span class="font-normal text-slate-600" id="ps-charges-txt">Marié(e) - 2 Enfants</span></p>
+                        </div>
+                    </div>
+
+                    <!-- Breakdown Table -->
+                    <table class="w-full text-left border-collapse text-xs sm:text-sm mb-6">
+                        <thead>
+                            <tr class="bg-slate-100 text-slate-700 uppercase font-bold text-[11px] border-y border-slate-300">
+                                <th class="py-2.5 px-3">Rubrique</th>
+                                <th class="py-2.5 px-3 text-right">Base / Nombre</th>
+                                <th class="py-2.5 px-3 text-right">Taux / Tranche</th>
+                                <th class="py-2.5 px-3 text-right">Gains (DH)</th>
+                                <th class="py-2.5 px-3 text-right">Retenues (DH)</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-200">
+                            <tr>
+                                <td class="py-2.5 px-3 font-medium">Salaire de Base</td>
+                                <td class="py-2.5 px-3 text-right" id="ps-base-hours">173.33 hrs</td>
+                                <td class="py-2.5 px-3 text-right">-</td>
+                                <td class="py-2.5 px-3 text-right font-semibold text-slate-800" id="ps-brut-val">15 000.00</td>
+                                <td class="py-2.5 px-3 text-right text-slate-400">-</td>
+                            </tr>
+                            <tr id="ps-row-exore" class="hidden">
+                                <td class="py-2.5 px-3 font-medium text-slate-600">Indemnités Exonérées / Primes</td>
+                                <td class="py-2.5 px-3 text-right">-</td>
+                                <td class="py-2.5 px-3 text-right">-</td>
+                                <td class="py-2.5 px-3 text-right font-semibold text-slate-800" id="ps-exo-val">0.00</td>
+                                <td class="py-2.5 px-3 text-right text-slate-400">-</td>
+                            </tr>
+                            <tr>
+                                <td class="py-2.5 px-3 text-slate-700">Cotisation CNSS (Prestations Sociales)</td>
+                                <td class="py-2.5 px-3 text-right" id="ps-cnss-base">6 000.00</td>
+                                <td class="py-2.5 px-3 text-right">4.48%</td>
+                                <td class="py-2.5 px-3 text-right text-slate-400">-</td>
+                                <td class="py-2.5 px-3 text-right text-rose-600 font-medium" id="ps-cnss-val">268.80</td>
+                            </tr>
+                            <tr>
+                                <td class="py-2.5 px-3 text-slate-700">Cotisation AMO (Assurance Maladie)</td>
+                                <td class="py-2.5 px-3 text-right" id="ps-amo-base">15 000.00</td>
+                                <td class="py-2.5 px-3 text-right">2.26%</td>
+                                <td class="py-2.5 px-3 text-right text-slate-400">-</td>
+                                <td class="py-2.5 px-3 text-right text-rose-600 font-medium" id="ps-amo-val">339.00</td>
+                            </tr>
+                            <tr>
+                                <td class="py-2.5 px-3 text-slate-700">Impôt sur le Revenu Net (IR)</td>
+                                <td class="py-2.5 px-3 text-right" id="ps-sni-val">11 475.53 (SNI)</td>
+                                <td class="py-2.5 px-3 text-right" id="ps-ir-rate">34%</td>
+                                <td class="py-2.5 px-3 text-right text-slate-400">-</td>
+                                <td class="py-2.5 px-3 text-right text-rose-600 font-medium" id="ps-ir-val">1 968.35</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <!-- Summary & Net Calculation Footer -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t-2 border-slate-300">
+                        <!-- Recap Table -->
+                        <div class="space-y-1.5 text-xs text-slate-600">
+                            <div class="flex justify-between">
+                                <span>Salaire Brut Imposable (SBI):</span>
+                                <span class="font-bold text-slate-800" id="ps-sbi">15 000.00 DH</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>Frais Professionnels Déd.:</span>
+                                <span class="font-bold text-slate-800" id="ps-frais">2 916.67 DH</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>Salaire Net Imposable (SNI):</span>
+                                <span class="font-bold text-slate-800" id="ps-sni-recap">11 475.53 DH</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>Déductions pour charges de famille:</span>
+                                <span class="font-bold text-emerald-600" id="ps-ded-fam">100.00 DH</span>
+                            </div>
+                        </div>
+
+                        <!-- Big Net Payable Box -->
+                        <div class="bg-slate-900 text-white rounded-lg p-4 flex flex-col justify-center items-center text-center">
+                            <span class="text-xs uppercase tracking-wider text-slate-400 font-semibold">NET À PAYER AU SALARIÉ</span>
+                            <span class="text-3xl font-black text-emerald-400 mt-1" id="ps-net-final">12 423.85 DH</span>
+                            <span class="text-[10px] text-slate-400 mt-1">Payé par virement bancaire</span>
+                        </div>
+                    </div>
+
+                    <!-- Signatures -->
+                    <div class="mt-12 pt-8 border-t border-slate-200 grid grid-cols-2 gap-8 text-center text-xs text-slate-500">
+                        <div>
+                            <p class="font-semibold text-slate-700 mb-8">Signature & Cachet de l'Employeur</p>
+                            <p class="text-[10px] italic">Document généré informatiquement</p>
+                        </div>
+                        <div>
+                            <p class="font-semibold text-slate-700 mb-8">Signature du Salarié</p>
+                            <p class="text-[10px] italic">"Lu et approuvé"</p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- TAB 3: CAS PRATIQUE DETAILLE (15 000 DH)    -->
+        <!-- ========================================== -->
+        <div id="tab-cas" class="tab-content hidden space-y-6">
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                <div class="flex items-center gap-3 border-b border-slate-100 pb-4 mb-6">
+                    <div class="bg-brand-50 text-brand-700 p-3 rounded-xl font-bold">
+                        <i class="fa-solid fa-graduation-cap text-2xl"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-900">Cas Pratique Détaillé : Salaire Brut de 15 000 DH</h2>
+                        <p class="text-sm text-slate-500">Hypothèses : Salarié marié avec 2 personnes à charge (Déduction famille = 2 x 50 DH = 100 DH/mois).</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    
+                    <!-- Etape par etape 2026 -->
+                    <div class="space-y-4">
+                        <h3 class="font-bold text-slate-800 text-lg border-b pb-2 flex items-center justify-between">
+                            <span>Barème 2026</span>
+                            <span class="text-xs font-semibold bg-slate-100 text-slate-600 px-2 py-1 rounded">2026</span>
+                        </h3>
+
+                        <ol class="space-y-3 text-sm">
+                            <li class="bg-slate-50 p-3 rounded-lg border border-slate-200">
+                                <span class="font-bold text-brand-900 block">1. CNSS (Prestations Sociales)</span>
+                                4,48% de 15 000 DH, plafonné à 6 000 DH.<br>
+                                <code class="text-xs bg-slate-200 px-1 py-0.5 rounded">6 000 × 4,48% = 268,80 DH</code>
+                            </li>
+                            <li class="bg-slate-50 p-3 rounded-lg border border-slate-200">
+                                <span class="font-bold text-brand-900 block">2. AMO (Maladie Obligatoire)</span>
+                                2,26% sur le Salaire Brut Imposable sans plafond.<br>
+                                <code class="text-xs bg-slate-200 px-1 py-0.5 rounded">15 000 × 2,26% = 339,00 DH</code>
+                            </li>
+                            <li class="bg-slate-50 p-3 rounded-lg border border-slate-200">
+                                <span class="font-bold text-brand-900 block">3. Frais Professionnels (2026)</span>
+                                SBI > 6 500 DH ⇒ Taux 25%. Plafond mensuel = 2 916,67 DH.<br>
+                                Calcul théorique : 15 000 × 25% = 3 750 DH.<br>
+                                Retenu = <code class="text-xs bg-slate-200 px-1 py-0.5 rounded">MIN(3750, 2916.67) = 2 916,67 DH</code>
+                            </li>
+                            <li class="bg-slate-50 p-3 rounded-lg border border-slate-200">
+                                <span class="font-bold text-brand-900 block">4. Salaire Net Imposable (SNI)</span>
+                                <code class="text-xs bg-slate-200 px-1 py-0.5 rounded">15 000 - 268,80 - 339,00 - 2 916,67 = 11 475,53 DH</code>
+                            </li>
+                            <li class="bg-slate-50 p-3 rounded-lg border border-slate-200">
+                                <span class="font-bold text-brand-900 block">5. IR Brut & Net (Barème 2026)</span>
+                                Tranche [8 333,34 à 15 000 DH/mois] ⇒ Taux = 34%, Somme à déduire = 1 833,33 DH.<br>
+                                IR Brut = <code class="text-xs bg-slate-200 px-1 py-0.5 rounded">(11 475,53 × 34%) - 1 833,33 = 2 068,35 DH</code><br>
+                                IR Net = <code class="text-xs bg-slate-200 px-1 py-0.5 rounded">2 068,35 - 100 (Charges) = 1 968,35 DH</code>
+                            </li>
+                            <li class="bg-brand-900 text-white p-3 rounded-lg font-bold flex justify-between">
+                                <span>NET À PAYER (2026)</span>
+                                <span>12 423.85 DH</span>
+                            </li>
+                        </ol>
+                    </div>
+
+                    <!-- Etape par etape Nouveau Barème 2027 -->
+                    <div class="space-y-4">
+                        <h3 class="font-bold text-emerald-900 text-lg border-b border-emerald-200 pb-2 flex items-center justify-between">
+                            <span>Barème 2027 (Frais Pro 45%)</span>
+                            <span class="text-xs font-semibold bg-emerald-100 text-emerald-800 px-2 py-1 rounded">2027</span>
+                        </h3>
+
+                        <ol class="space-y-3 text-sm">
+                            <li class="bg-emerald-50/50 p-3 rounded-lg border border-emerald-100">
+                                <span class="font-bold text-emerald-900 block">1. CNSS (Prestations Sociales)</span>
+                                Identique : <code class="text-xs bg-emerald-100/60 px-1 py-0.5 rounded">6 000 × 4,48% = 268,80 DH</code>
+                            </li>
+                            <li class="bg-emerald-50/50 p-3 rounded-lg border border-emerald-100">
+                                <span class="font-bold text-emerald-900 block">2. AMO (Maladie Obligatoire)</span>
+                                Identique : <code class="text-xs bg-emerald-100/60 px-1 py-0.5 rounded">15 000 × 2,26% = 339,00 DH</code>
+                            </li>
+                            <li class="bg-emerald-50/50 p-3 rounded-lg border border-emerald-100">
+                                <span class="font-bold text-emerald-900 block">3. Frais Professionnels (Taux 45% - Plafond 2 916,67 DH)</span>
+                                Calcul théorique : 15 000 × 45% = 6 750,00 DH.<br>
+                                Retenu (Plafonné) = <code class="text-xs bg-emerald-100/60 px-1 py-0.5 rounded">MIN(6750, 2916.67) = 2 916,67 DH</code>
+                            </li>
+                            <li class="bg-emerald-50/50 p-3 rounded-lg border border-emerald-100">
+                                <span class="font-bold text-emerald-900 block">4. Salaire Net Imposable (SNI)</span>
+                                <code class="text-xs bg-emerald-100/60 px-1 py-0.5 rounded">15 000 - 268,80 - 339,00 - 2 916,67 = 11 475,53 DH</code>
+                            </li>
+                            <li class="bg-emerald-50/50 p-3 rounded-lg border border-emerald-100">
+                                <span class="font-bold text-emerald-900 block">5. IR Brut & Net (Barème 2027)</span>
+                                Tranche [8 333,34 à 15 000 DH/mois] ⇒ Taux = 34%, Somme à déduire = 2 333,33 DH.<br>
+                                IR Brut = <code class="text-xs bg-emerald-100/60 px-1 py-0.5 rounded">(11 475,53 × 34%) - 2 333,33 = 1 568,35 DH</code><br>
+                                IR Net = <code class="text-xs bg-emerald-100/60 px-1 py-0.5 rounded">1 568,35 - 100 (Charges) = 1 468,35 DH</code>
+                            </li>
+                            <li class="bg-emerald-600 text-white p-3 rounded-lg font-bold flex justify-between">
+                                <span>NET À PAYER (2027)</span>
+                                <span>12 923.85 DH</span>
+                            </li>
+                        </ol>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- TAB 4: FORMULES EXCEL & BAREMES FISCAUX   -->
+        <!-- ========================================== -->
+        <div id="tab-formulas" class="tab-content hidden space-y-6">
+            
+            <!-- Excel Formulas Card -->
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                <div class="flex items-center justify-between border-b border-slate-100 pb-4 mb-6">
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">
+                            <i class="fa-file-excel text-emerald-600 text-2xl"></i> Formules Excel Prêtes à l'Emploi
+                        </h2>
+                        <p class="text-sm text-slate-500">Supposons que la cellule <strong>B2</strong> contient le Salaire Brut Global et <strong>B3</strong> le nombre de personnes à charge.</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 gap-4">
+                    
+                    <div class="border border-slate-200 rounded-lg p-4 bg-slate-50">
+                        <div class="flex justify-between items-center mb-1">
+                            <span class="font-bold text-slate-800 text-sm">1. Cotisation CNSS (Plafonnée à 268.80 DH)</span>
+                            <button onclick="copyFormula('f-cnss')" class="text-xs bg-white border hover:bg-slate-100 font-semibold px-2 py-1 rounded text-slate-600"><i class="fa-regular fa-copy"></i> Copier</button>
+                        </div>
+                        <code id="f-cnss" class="block font-mono text-xs bg-slate-900 text-emerald-400 p-3 rounded-md overflow-x-auto">=MIN(B2 * 0.0448; 268.80)</code>
+                    </div>
+
+                    <div class="border border-slate-200 rounded-lg p-4 bg-slate-50">
+                        <div class="flex justify-between items-center mb-1">
+                            <span class="font-bold text-slate-800 text-sm">2. Cotisation AMO (Assurance Maladie)</span>
+                            <button onclick="copyFormula('f-amo')" class="text-xs bg-white border hover:bg-slate-100 font-semibold px-2 py-1 rounded text-slate-600"><i class="fa-regular fa-copy"></i> Copier</button>
+                        </div>
+                        <code id="f-amo" class="block font-mono text-xs bg-slate-900 text-emerald-400 p-3 rounded-md overflow-x-auto">=B2 * 0.0226</code>
+                    </div>
+
+                    <div class="border border-slate-200 rounded-lg p-4 bg-slate-50">
+                        <div class="flex justify-between items-center mb-1">
+                            <span class="font-bold text-slate-800 text-sm">3. Frais Professionnels 2027 (Taux 45% - Plafond 2 916,67 DH/mois)</span>
+                            <button onclick="copyFormula('f-frais')" class="text-xs bg-white border hover:bg-slate-100 font-semibold px-2 py-1 rounded text-slate-600"><i class="fa-regular fa-copy"></i> Copier</button>
+                        </div>
+                        <code id="f-frais" class="block font-mono text-xs bg-slate-900 text-emerald-400 p-3 rounded-md overflow-x-auto">=MIN(B2 * 0.45; 2916.67)</code>
+                    </div>
+
+                    <div class="border border-slate-200 rounded-lg p-4 bg-slate-50">
+                        <div class="flex justify-between items-center mb-1">
+                            <span class="font-bold text-slate-800 text-sm">4. Salaire Net Imposable (SNI) 2027</span>
+                            <button onclick="copyFormula('f-sni')" class="text-xs bg-white border hover:bg-slate-100 font-semibold px-2 py-1 rounded text-slate-600"><i class="fa-regular fa-copy"></i> Copier</button>
+                        </div>
+                        <code id="f-sni" class="block font-mono text-xs bg-slate-900 text-emerald-400 p-3 rounded-md overflow-x-auto">=B2 - MIN(B2*0.0448; 268.80) - (B2*0.0226) - MIN(B2*0.45; 2916.67)</code>
+                    </div>
+
+                    <div class="border border-slate-200 rounded-lg p-4 bg-slate-50">
+                        <div class="flex justify-between items-center mb-1">
+                            <span class="font-bold text-slate-800 text-sm">5. Calcul de l'IR Brut (Barème 2027 Mensuel)</span>
+                            <button onclick="copyFormula('f-ir2027')" class="text-xs bg-white border hover:bg-slate-100 font-semibold px-2 py-1 rounded text-slate-600"><i class="fa-regular fa-copy"></i> Copier</button>
+                        </div>
+                        <code id="f-ir2027" class="block font-mono text-xs bg-slate-900 text-emerald-400 p-3 rounded-md overflow-x-auto">=SI(SNI<=5000; 0; SI(SNI<=6666.67; SNI*0.10 - 500; SI(SNI<=8333.33; SNI*0.20 - 1166.67; SI(SNI<=15000; SNI*0.34 - 2333.33; SNI*0.37 - 2783.33))))</code>
+                    </div>
+
+                    <div class="border border-slate-200 rounded-lg p-4 bg-slate-50">
+                        <div class="flex justify-between items-center mb-1">
+                            <span class="font-bold text-slate-800 text-sm">6. IR Net Final (Après Déduction Charges de Famille)</span>
+                            <button onclick="copyFormula('f-irnet')" class="text-xs bg-white border hover:bg-slate-100 font-semibold px-2 py-1 rounded text-slate-600"><i class="fa-regular fa-copy"></i> Copier</button>
+                        </div>
+                        <code id="f-irnet" class="block font-mono text-xs bg-slate-900 text-emerald-400 p-3 rounded-md overflow-x-auto">=MAX(0; IR_BRUT - (MIN(B3; 6) * 50))</code>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Grilles Fiscales comparatives -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Grille Barème IR Mensuel 2026 -->
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                    <h3 class="font-bold text-slate-900 text-base mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-table-cells text-slate-600"></i> Barème Mensuel de l'IR (2026)
+                    </h3>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs">
+                            <thead>
+                                <tr class="bg-slate-100 border-b border-slate-200">
+                                    <th class="p-2">Tranche RNI</th>
+                                    <th class="p-2 text-center">Taux</th>
+                                    <th class="p-2 text-right">Somme à Déduire</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100">
+                                <tr><td class="p-2">0 à 3 333,33 DH</td><td class="p-2 text-center font-semibold text-slate-600">0%</td><td class="p-2 text-right">0,00 DH</td></tr>
+                                <tr><td class="p-2">3 333,34 à 5 000,00 DH</td><td class="p-2 text-center font-semibold">10%</td><td class="p-2 text-right">333,33 DH</td></tr>
+                                <tr><td class="p-2">5 000,01 à 6 666,67 DH</td><td class="p-2 text-center font-semibold">20%</td><td class="p-2 text-right">833,33 DH</td></tr>
+                                <tr><td class="p-2">6 666,68 à 8 333,33 DH</td><td class="p-2 text-center font-semibold">30%</td><td class="p-2 text-right">1 500,00 DH</td></tr>
+                                <tr><td class="p-2">8 333,34 à 15 000,00 DH</td><td class="p-2 text-center font-semibold">34%</td><td class="p-2 text-right">1 833,33 DH</td></tr>
+                                <tr><td class="p-2">Plus de 15 000,01 DH</td><td class="p-2 text-center font-semibold text-slate-700">37%</td><td class="p-2 text-right">2 283,33 DH</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Grille Barème IR Mensuel 2027 -->
+                <div class="bg-white rounded-xl shadow-sm border border-emerald-200 p-6">
+                    <h3 class="font-bold text-emerald-900 text-base mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-table-cells text-emerald-600"></i> Nouveau Barème Mensuel IR (2027)
+                    </h3>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs">
+                            <thead>
+                                <tr class="bg-emerald-50 border-b border-emerald-100">
+                                    <th class="p-2">Tranche RNI</th>
+                                    <th class="p-2 text-center">Taux</th>
+                                    <th class="p-2 text-right">Somme à Déduire</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100">
+                                <tr><td class="p-2">0 à 5 000,00 DH</td><td class="p-2 text-center font-semibold text-emerald-600">0%</td><td class="p-2 text-right">0,00 DH</td></tr>
+                                <tr><td class="p-2">5 001,00 à 6 666,67 DH</td><td class="p-2 text-center font-semibold">10%</td><td class="p-2 text-right">500,00 DH</td></tr>
+                                <tr><td class="p-2">6 666,68 à 8 333,33 DH</td><td class="p-2 text-center font-semibold">20%</td><td class="p-2 text-right">1 166,67 DH</td></tr>
+                                <tr><td class="p-2">8 333,34 à 15 000,00 DH</td><td class="p-2 text-center font-semibold">34%</td><td class="p-2 text-right">2 333,33 DH</td></tr>
+                                <tr><td class="p-2">Plus de 15 000,00 DH</td><td class="p-2 text-center font-semibold text-emerald-700">37%</td><td class="p-2 text-right">2 783,33 DH</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Toast Notification for Copy -->
+    <div id="toast" class="fixed bottom-4 right-4 bg-slate-900 text-white text-xs px-4 py-3 rounded-lg shadow-xl opacity-0 transition-opacity duration-300 pointer-events-none flex items-center gap-2">
+        <i class="fa-solid fa-check text-emerald-400"></i> Formule copiée dans le presse-papier !
+    </div>
+
+    <!-- JavaScript Engine -->
+    <script>
+        // Global State
+        const state = {
+            brut: 15000,
+            exo: 0,
+            charges: 2
+        };
+
+        // Window Load Initialization
+        window.onload = function() {
+            calculateAll();
+        };
+
+        // Sync functions for inputs and sliders
+        function syncBrutInput(val) {
+            let num = parseFloat(val) || 0;
+            state.brut = num;
+            document.getElementById('slider-brut').value = Math.min(Math.max(num, 3000), 60000);
+            document.getElementById('brut-display').textContent = formatDH(num);
+            calculateAll();
+        }
+
+        function syncBrutSlider(val) {
+            let num = parseFloat(val) || 0;
+            state.brut = num;
+            document.getElementById('input-brut').value = num;
+            document.getElementById('brut-display').textContent = formatDH(num);
+            calculateAll();
+        }
+
+        function setQuickBrut(val) {
+            state.brut = val;
+            document.getElementById('input-brut').value = val;
+            document.getElementById('slider-brut').value = Math.min(Math.max(val, 3000), 60000);
+            document.getElementById('brut-display').textContent = formatDH(val);
+            calculateAll();
+        }
+
+        function setCharge(nb) {
+            state.charges = nb;
+            const buttons = document.querySelectorAll('.charge-btn');
+            buttons.forEach((btn, index) => {
+                if (index === nb) {
+                    btn.className = 'charge-btn bg-brand-800 text-white border border-brand-800 py-1.5 rounded-md text-xs font-semibold';
+                } else {
+                    btn.className = 'charge-btn border border-slate-200 py-1.5 rounded-md text-xs font-semibold hover:bg-slate-50';
+                }
+            });
+            calculateAll();
+        }
+
+        function resetInputs() {
+            state.brut = 15000;
+            state.exo = 0;
+            state.charges = 2;
+            document.getElementById('input-brut').value = 15000;
+            document.getElementById('slider-brut').value = 15000;
+            document.getElementById('brut-display').textContent = '15 000 DH';
+            document.getElementById('input-exore').value = 0;
+            setCharge(2);
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById(tabId).classList.remove('hidden');
+
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('bg-brand-800', 'text-white', 'shadow');
+                btn.classList.add('text-slate-600', 'hover:bg-slate-100');
+            });
+
+            const activeBtn = document.getElementById('btn-' + tabId);
+            if (activeBtn) {
+                activeBtn.classList.remove('text-slate-600', 'hover:bg-slate-100');
+                activeBtn.classList.add('bg-brand-800', 'text-white', 'shadow');
+            }
+
+            if (tabId === 'tab-fiche') {
+                updatePayslipView();
+            }
+        }
+
+        // Calculation Master Function
+        function calculateAll() {
+            const exoInput = parseFloat(document.getElementById('input-exore').value) || 0;
+            state.exo = exoInput;
+
+            const res2026 = computePayroll(state.brut, state.exo, state.charges, 2026);
+            const res2027 = computePayroll(state.brut, state.exo, state.charges, 2027);
+
+            // Update 2026 UI
+            document.getElementById('v26-brut').textContent = formatDH(res2026.brutGlobal);
+            document.getElementById('v26-cnss').textContent = '-' + formatDH(res2026.cnss);
+            document.getElementById('v26-amo').textContent = '-' + formatDH(res2026.amo);
+            document.getElementById('v26-frais-rate').textContent = `Taux: ${res2026.fraisRate}% | Plafond: 2916.67 DH`;
+            document.getElementById('v26-frais').textContent = '-' + formatDH(res2026.fraisPro);
+            document.getElementById('v26-sni').textContent = formatDH(res2026.sni);
+            document.getElementById('v26-ir-tranche').textContent = res2026.irRate + '%';
+            document.getElementById('v26-ir-brut').textContent = formatDH(res2026.irBrut);
+            document.getElementById('v26-nb-charge').textContent = state.charges;
+            document.getElementById('v26-deduction-famille').textContent = '+' + formatDH(res2026.deductionFamille);
+            document.getElementById('v26-ir-net').textContent = formatDH(res2026.irNet);
+            document.getElementById('v26-net').textContent = formatDH(res2026.netAPayer);
+
+            // Update 2027 Card UI
+            document.getElementById('v27-brut').textContent = formatDH(res2027.brutGlobal);
+            document.getElementById('v27-cnss').textContent = '-' + formatDH(res2027.cnss);
+            document.getElementById('v27-amo').textContent = '-' + formatDH(res2027.amo);
+            document.getElementById('v27-frais-rate').textContent = `Taux: ${res2027.fraisRate}% | Plafond: 2916.67 DH`;
+            document.getElementById('v27-frais').textContent = '-' + formatDH(res2027.fraisPro);
+            document.getElementById('v27-sni').textContent = formatDH(res2027.sni);
+            document.getElementById('v27-ir-tranche').textContent = res2027.irRate + '%';
+            document.getElementById('v27-ir-brut').textContent = formatDH(res2027.irBrut);
+            document.getElementById('v27-nb-charge').textContent = state.charges;
+            document.getElementById('v27-deduction-famille').textContent = '+' + formatDH(res2027.deductionFamille);
+            document.getElementById('v27-ir-net').textContent = formatDH(res2027.irNet);
+            document.getElementById('v27-net').textContent = formatDH(res2027.netAPayer);
+
+            // Update Summary Gain Header
+            const gainMensuel = res2027.netAPayer - res2026.netAPayer;
+            const gainAnnuel = gainMensuel * 12;
+            const pctGain = res2026.netAPayer > 0 ? (gainMensuel / res2026.netAPayer) * 100 : 0;
+            const ecoIR = res2026.irNet - res2027.irNet;
+
+            const tauxEff2026 = res2026.brutGlobal > 0 ? (res2026.irNet / res2026.brutGlobal) * 100 : 0;
+            const tauxEff2027 = res2027.brutGlobal > 0 ? (res2027.irNet / res2027.brutGlobal) * 100 : 0;
+
+            document.getElementById('gain-mensuel').textContent = (gainMensuel >= 0 ? '+' : '') + formatDH(gainMensuel);
+            document.getElementById('gain-pourcentage').textContent = (gainMensuel >= 0 ? '+' : '') + pctGain.toFixed(2) + '% de gain';
+            document.getElementById('gain-annuel').textContent = formatDH(gainAnnuel);
+            document.getElementById('eco-ir').textContent = formatDH(ecoIR) + '/mois';
+            document.getElementById('taux-effectif-2026').textContent = tauxEff2026.toFixed(2) + '%';
+            document.getElementById('taux-effectif-2027').textContent = tauxEff2027.toFixed(2) + '%';
+
+            updatePayslipView();
+        }
+
+        // Moroccan Payroll Tax Rules Engine
+        function computePayroll(brut, exo, charges, year) {
+            const sbi = Math.max(0, brut);
+            
+            // 1. Social Contributions
+            const cnss = Math.min(sbi * 0.0448, 268.80);
+            const amo = sbi * 0.0226;
+
+            // 2. Professional Expenses
+            let fraisRate = year === 2027 ? 45 : (sbi <= 6500 ? 35 : 25);
+            let maxFraisMonthly = 2916.67; // 35,000 DH annually
+            let fraisProCalculated = sbi * (fraisRate / 100);
+            let fraisPro = Math.min(fraisProCalculated, maxFraisMonthly);
+
+            // 3. Taxable Net Income (SNI)
+            const sni = Math.max(0, sbi - cnss - amo - fraisPro);
+
+            // 4. IR Calculation according to Year Scale
+            let irRate = 0;
+            let deductionSum = 0;
+
+            if (year === 2026) {
+                // Barème IR 2026
+                if (sni <= 3333.33) {
+                    irRate = 0; deductionSum = 0;
+                } else if (sni <= 5000.00) {
+                    irRate = 10; deductionSum = 333.33;
+                } else if (sni <= 6666.67) {
+                    irRate = 20; deductionSum = 833.33;
+                } else if (sni <= 8333.33) {
+                    irRate = 30; deductionSum = 1500.00;
+                } else if (sni <= 15000.00) {
+                    irRate = 34; deductionSum = 1833.33;
+                } else {
+                    irRate = 37; deductionSum = 2283.33;
+                }
+            } else {
+                // Barème IR 2027 (Nouveau Barème)
+                if (sni <= 5000.00) {
+                    irRate = 0; deductionSum = 0;
+                } else if (sni <= 6666.67) {
+                    irRate = 10; deductionSum = 500.00;
+                } else if (sni <= 8333.33) {
+                    irRate = 20; deductionSum = 1166.67;
+                } else if (sni <= 15000.00) {
+                    irRate = 34; deductionSum = 2333.33;
+                } else {
+                    irRate = 37; deductionSum = 2783.33;
+                }
+            }
+
+            let irBrut = Math.max(0, (sni * (irRate / 100)) - deductionSum);
+
+            // Family Deductions (50 DH per dependent, max 6 dependents = 300 DH)
+            let validCharges = Math.min(Math.max(0, charges), 6);
+            let deductionFamille = validCharges * 50;
+            let irNet = Math.max(0, irBrut - deductionFamille);
+
+            // Net Payable Calculation
+            let netAPayer = (sbi + exo) - cnss - amo - irNet;
+
+            return {
+                brutGlobal: sbi,
+                exo: exo,
+                cnss: cnss,
+                amo: amo,
+                fraisPro: fraisPro,
+                fraisRate: fraisRate,
+                sni: sni,
+                irRate: irRate,
+                irBrut: irBrut,
+                deductionFamille: deductionFamille,
+                irNet: irNet,
+                netAPayer: netAPayer
+            };
+        }
+
+        // Payslip renderer
+        function updatePayslipView() {
+            const year = parseInt(document.getElementById('select-fiche-year').value) || 2027;
+            const res = computePayroll(state.brut, state.exo, state.charges, year);
+
+            document.getElementById('ps-period').textContent = `Janvier ${year}`;
+            document.getElementById('ps-charges-txt').textContent = state.charges > 0 ? `Marié(e) - ${state.charges} Charge(s)` : 'Célibataire / Sans Charge';
+            document.getElementById('ps-brut-val').textContent = formatDH(res.brutGlobal, false);
+
+            if (state.exo > 0) {
+                document.getElementById('ps-row-exore').classList.remove('hidden');
+                document.getElementById('ps-exo-val').textContent = formatDH(state.exo, false);
+            } else {
+                document.getElementById('ps-row-exore').classList.add('hidden');
+            }
+
+            document.getElementById('ps-cnss-base').textContent = formatDH(Math.min(res.brutGlobal, 6000), false);
+            document.getElementById('ps-cnss-val').textContent = formatDH(res.cnss, false);
+
+            document.getElementById('ps-amo-base').textContent = formatDH(res.brutGlobal, false);
+            document.getElementById('ps-amo-val').textContent = formatDH(res.amo, false);
+
+            document.getElementById('ps-sni-val').textContent = formatDH(res.sni, false) + ' (SNI)';
+            document.getElementById('ps-ir-rate').textContent = res.irRate + '%';
+            document.getElementById('ps-ir-val').textContent = formatDH(res.irNet, false);
+
+            document.getElementById('ps-sbi').textContent = formatDH(res.brutGlobal);
+            document.getElementById('ps-frais').textContent = formatDH(res.fraisPro);
+            document.getElementById('ps-sni-recap').textContent = formatDH(res.sni);
+            document.getElementById('ps-ded-fam').textContent = formatDH(res.deductionFamille);
+
+            document.getElementById('ps-net-final').textContent = formatDH(res.netAPayer);
+        }
+
+        // Format helper
+        function formatDH(val, includeSymbol = true) {
+            let formatted = new Intl.NumberFormat('fr-MA', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(val);
+            return includeSymbol ? formatted + ' DH' : formatted;
+        }
+
+        // Clipboard Helper
+        function copyFormula(elementId) {
+            const text = document.getElementById(elementId).innerText;
+            
+            // Standard fallback copy
+            const dummy = document.createElement("textarea");
+            document.body.appendChild(dummy);
+            dummy.value = text;
+            dummy.select();
+            document.execCommand("copy");
+            document.body.removeChild(dummy);
+
+            // Toast UI
+            const toast = document.getElementById('toast');
+            toast.classList.remove('opacity-0', 'pointer-events-none');
+            toast.classList.add('opacity-100');
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'pointer-events-none');
+                toast.classList.remove('opacity-100');
+            }, 2500);
+        }
+    </script>
+</body>
+</html>
